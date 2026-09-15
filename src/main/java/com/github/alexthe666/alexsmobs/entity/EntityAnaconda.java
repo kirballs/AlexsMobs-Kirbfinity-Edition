@@ -49,8 +49,14 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class EntityAnaconda extends Animal implements ISemiAquatic {
+
+    /** Players in creative or spectator mode cannot be hurt, so the anaconda must never target or constrict them. */
+    private static final Predicate<LivingEntity> TARGETABLE_PREDICATE = (livingEntity) -> {
+        return !(livingEntity instanceof Player player && (player.isCreative() || player.isSpectator()));
+    };
 
     private static final EntityDataAccessor<Optional<UUID>> CHILD_UUID = SynchedEntityData.defineId(EntityAnaconda.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final EntityDataAccessor<Integer> CHILD_ID = SynchedEntityData.defineId(EntityAnaconda.class, EntityDataSerializers.INT);
@@ -131,7 +137,7 @@ public class EntityAnaconda extends Animal implements ISemiAquatic {
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 25F));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal(this, LivingEntity.class, 200, false, false, AMEntityRegistry.buildPredicateFromTag(AMTagRegistry.ANACONDA_TARGETS)));
-        this.targetSelector.addGoal(2, new EntityAINearestTarget3D(this, Player.class, 110, false, true, null) {
+        this.targetSelector.addGoal(2, new EntityAINearestTarget3D(this, Player.class, 110, false, true, TARGETABLE_PREDICATE) {
             public boolean canUse() {
                 return !isBaby() && passiveFor == 0 && level().getDifficulty() != Difficulty.PEACEFUL && !EntityAnaconda.this.isInLove() && super.canUse();
             }
@@ -279,6 +285,12 @@ public class EntityAnaconda extends Animal implements ISemiAquatic {
         this.yHeadRot = Mth.clamp(this.yHeadRot, this.yBodyRot - 70, this.yBodyRot + 70);
 
         if (this.isStrangling()) {
+            if (!level().isClientSide && this.getTarget() instanceof Player player && (player.isCreative() || player.isSpectator())) {
+                // Never constrict players that cannot take damage (creative/spectator mode) - release them immediately.
+                this.strangleTimer = 0;
+                this.setStrangling(false);
+                this.setTarget(null);
+            }
             if (!level().isClientSide && this.getTarget() != null && this.getTarget().isAlive()) {
                 this.setXRot(0);
                 final LivingEntity target = this.getTarget();
@@ -543,6 +555,10 @@ public class EntityAnaconda extends Animal implements ISemiAquatic {
 
     @Override
     public boolean canAttack(LivingEntity livingEntity) {
+        if (livingEntity instanceof Player player && (player.isCreative() || player.isSpectator())) {
+            // Creative/spectator players cannot be hurt, so never respond aggressively towards them.
+            return false;
+        }
         boolean prev = super.canAttack(livingEntity);
         if(prev && passiveFor > 0 && livingEntity instanceof Player && (this.getLastHurtByMob() == null || !this.getLastHurtByMob().getUUID().equals(livingEntity.getUUID()))){
             return false;
@@ -578,7 +594,7 @@ public class EntityAnaconda extends Animal implements ISemiAquatic {
 
         @Override
         public boolean canUse() {
-            return snake.getTarget() != null && snake.getTarget().isAlive();
+            return snake.getTarget() != null && snake.getTarget().isAlive() && snake.canAttack(snake.getTarget());
         }
 
         public void tick() {
@@ -587,6 +603,12 @@ public class EntityAnaconda extends Animal implements ISemiAquatic {
 
             final LivingEntity target = snake.getTarget();
             if (target != null && target.isAlive()) {
+                if (target instanceof Player player && (player.isCreative() || player.isSpectator())) {
+                    // Creative/spectator players cannot take damage - stop biting and constricting them.
+                    snake.setStrangling(false);
+                    snake.setTarget(null);
+                    return;
+                }
                 if (jumpAttemptCooldown == 0 && snake.distanceTo(target) < 1 + target.getBbWidth() && !snake.isStrangling()) {
                     target.hurt(snake.damageSources().mobAttack(snake), 4);
                     snake.setStrangling(target.getBbWidth() <= 2.0F && !(target instanceof EntityAnaconda));

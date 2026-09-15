@@ -3,7 +3,6 @@ package com.github.alexthe666.alexsmobs.entity;
 import com.github.alexthe666.alexsmobs.AlexsMobs;
 import com.github.alexthe666.alexsmobs.entity.util.AnacondaPartIndex;
 import com.github.alexthe666.alexsmobs.message.MessageHurtMultipart;
-import com.github.alexthe666.alexsmobs.misc.AMBlockPos;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -23,7 +22,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -33,7 +32,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 public class EntityAnacondaPart extends LivingEntity implements IHurtableMultipart {
     private static final EntityDataAccessor<Integer> BODYINDEX = SynchedEntityData.defineId(EntityAnacondaPart.class, EntityDataSerializers.INT);
@@ -206,13 +204,27 @@ public class EntityAnacondaPart extends LivingEntity implements IHurtableMultipa
         if (this.noPhysics) {
             return false;
         } else {
-            final double d = 1D;
+            // A small probe plate is important: the old 1x1 plate made segments "detect" solid blocks
+            // up to half a block away horizontally, which made them tilt upwards and vibrate near walls.
             final Vec3 vec3 = new Vec3(x, y, z);
-            final AABB axisAlignedBB = AABB.ofSize(vec3, d, 1.0E-6D, d);
-            return this.level().getBlockStates(axisAlignedBB).filter(Predicate.not(BlockBehaviour.BlockStateBase::isAir)).anyMatch((p_185969_) -> {
-                BlockPos blockpos = AMBlockPos.fromVec3(vec3);
-                return p_185969_.isSuffocating(this.level(), blockpos) && Shapes.joinIsNotEmpty(p_185969_.getCollisionShape(this.level(), blockpos).move(vec3.x, vec3.y, vec3.z), Shapes.create(axisAlignedBB), BooleanOp.AND);
-            });
+            final AABB axisAlignedBB = AABB.ofSize(vec3, 0.25D, 1.0E-6D, 0.25D);
+            final int minX = Mth.floor(axisAlignedBB.minX);
+            final int maxX = Mth.floor(axisAlignedBB.maxX);
+            final int minY = Mth.floor(axisAlignedBB.minY);
+            final int maxY = Mth.floor(axisAlignedBB.maxY);
+            final int minZ = Mth.floor(axisAlignedBB.minZ);
+            final int maxZ = Mth.floor(axisAlignedBB.maxZ);
+            for (BlockPos blockpos : BlockPos.betweenClosed(minX, minY, minZ, maxX, maxY, maxZ)) {
+                final BlockState blockstate = this.level().getBlockState(blockpos);
+                // The collision shape is in block-local coordinates, so it must be moved by the
+                // block's position - moving it by the query position made the test pass for any
+                // solid block near the probe, causing phantom "buried" detections.
+                if (!blockstate.isAir() && blockstate.isSuffocating(this.level(), blockpos)
+                        && Shapes.joinIsNotEmpty(blockstate.getCollisionShape(this.level(), blockpos).move(blockpos.getX(), blockpos.getY(), blockpos.getZ()), Shapes.create(axisAlignedBB), BooleanOp.AND)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -228,7 +240,7 @@ public class EntityAnacondaPart extends LivingEntity implements IHurtableMultipa
         if (this.noPhysics) {
             return false;
         } else {
-            return !level().getFluidState(AMBlockPos.fromCoords(x, y, z)).isEmpty();
+            return !level().getFluidState(new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z))).isEmpty();
         }
     }
 
