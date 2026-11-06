@@ -17,31 +17,32 @@ public class ModelTiger extends AdvancedEntityModel<EntityTiger> {
     private final AdvancedModelBox tail;
     private final AdvancedModelBox tail2;
     private final AdvancedModelBox head;
+    private final AdvancedModelBox snout;
     private final AdvancedModelBox earleft;
     private final AdvancedModelBox earright;
-    private final AdvancedModelBox snout;
-    private final AdvancedModelBox legleft;
-    private final AdvancedModelBox legright;
     private final AdvancedModelBox armleft;
     private final AdvancedModelBox armright;
-    private final AdvancedModelBox armleft_geo;
-    private final AdvancedModelBox armright_geo;
+    private final AdvancedModelBox legleft;
+    private final AdvancedModelBox legright;
     private final AdvancedModelBox body_geo;
-    private final AdvancedModelBox earleft_geo;
-    private final AdvancedModelBox earright_geo;
-    private final AdvancedModelBox head_geo;
-    private final AdvancedModelBox legleft_geo;
-    private final AdvancedModelBox legright_geo;
-    private final AdvancedModelBox snout_geo;
     private final AdvancedModelBox tail_geo;
     private final AdvancedModelBox tail2_geo;
-    private final AdvancedModelBox tail_geo_b_tail1;
-    private final AdvancedModelBox tail2_geo_b_tail2;
-    private final AdvancedModelBox earright_geo_b_ear_right;
-    private final AdvancedModelBox earleft_geo_b_ear_left;
+    private final AdvancedModelBox head_geo;
+    private final AdvancedModelBox snout_geo;
+    private final AdvancedModelBox earleft_geo;
+    private final AdvancedModelBox earright_geo;
+    private final AdvancedModelBox armleft_geo;
+    private final AdvancedModelBox armright_geo;
+    private final AdvancedModelBox legleft_geo;
+    private final AdvancedModelBox legright_geo;
     private final ModelAnimator animator;
 
     public ModelTiger() {
+        // Generated from customs/big_cat1.geo.json (128x128 texture).
+        // Bedrock -> Java: X/Z identical, Y flipped about the ground plane (24 - y).
+        // Each animated bone sits at the geometry bone's real pivot, so the upstream
+        // animations rotate around the correct centres. Saddle/rein/chest tack bones
+        // from the source geometry are intentionally not imported.
         texWidth = 128;
         texHeight = 128;
 
@@ -49,135 +50,114 @@ public class ModelTiger extends AdvancedEntityModel<EntityTiger> {
         root.setRotationPoint(0F, 24F, 0F);
 
         body = new AdvancedModelBox(this, "body");
-        body.setRotationPoint(0F, -14F, 0F);
+        body.setRotationPoint(0F, -13.5F, 8F);
         root.addChild(body);
 
         tail = new AdvancedModelBox(this, "tail");
-        tail.setRotationPoint(0F, -4F, 8.6F);
+        tail.setRotationPoint(0F, -3.5F, 3F);
         body.addChild(tail);
-        setRotationAngle(tail, 0.0873F, 0F, 0F);
+        setRotationAngle(tail, 0.9599F, 0F, 0F);
 
         tail2 = new AdvancedModelBox(this, "tail2");
-        tail2.setRotationPoint(0F, 7.9F, 0F);
+        tail2.setRotationPoint(0F, 2F, 11F);
         tail.addChild(tail2);
-        setRotationAngle(tail2, 0.2182F, 0F, 0F);
+        setRotationAngle(tail2, -0.5672F, 0F, 0F);
 
         head = new AdvancedModelBox(this, "head");
-        head.setRotationPoint(0F, -4F, -12F);
+        head.setRotationPoint(0F, -2F, -19F);
         body.addChild(head);
 
+        snout = new AdvancedModelBox(this, "snout");
+        snout.setRotationPoint(0F, 0F, 0F);
+        head.addChild(snout);
+
         earleft = new AdvancedModelBox(this, "earleft");
-        earleft.setRotationPoint(3F, -4F, -2F);
+        earleft.setRotationPoint(1.75F, 2.1719F, -2.5361F);
         head.addChild(earleft);
+        setRotationAngle(earleft, -0.3491F, -0.4363F, -0.2618F);
 
         earright = new AdvancedModelBox(this, "earright");
-        earright.setRotationPoint(-3F, -4F, -2F);
+        earright.setRotationPoint(-1.75F, 2.1719F, -2.5361F);
         head.addChild(earright);
-
-        snout = new AdvancedModelBox(this, "snout");
-        snout.setRotationPoint(0F, -1F, -6F);
-        head.addChild(snout);
-        setRotationAngle(snout, 0.1745F, 0F, 0F);
-
-        legleft = new AdvancedModelBox(this, "legleft");
-        legleft.setRotationPoint(2.9F, 5F, 7.9F);
-        body.addChild(legleft);
-
-        legright = new AdvancedModelBox(this, "legright");
-        legright.setRotationPoint(-2.9F, 5F, 7.9F);
-        body.addChild(legright);
+        setRotationAngle(earright, -0.3491F, 0.4363F, 0.2618F);
 
         armleft = new AdvancedModelBox(this, "armleft");
-        armleft.setRotationPoint(3.5F, -1.5F, -9F);
+        armleft.setRotationPoint(4F, -1F, -15F);
         body.addChild(armleft);
 
         armright = new AdvancedModelBox(this, "armright");
-        armright.setRotationPoint(-3.5F, -1.5F, -9F);
+        armright.setRotationPoint(-4F, -1F, -15F);
         body.addChild(armright);
 
-        armleft_geo = new AdvancedModelBox(this, "armleft_geo");
-        armleft_geo.setRotationPoint(-3.5F, -8.5F, 9F);
-        armleft.addChild(armleft_geo);
-        armleft_geo.setTextureOffset(44, 47).addBox(2F, 9F, -9F, 4F, 15F, 4F, 0F, false);
+        legleft = new AdvancedModelBox(this, "legleft");
+        legleft.setRotationPoint(3F, 1F, 0F);
+        body.addChild(legleft);
 
-        armright_geo = new AdvancedModelBox(this, "armright_geo");
-        armright_geo.setRotationPoint(3.5F, -8.5F, 9F);
-        armright.addChild(armright_geo);
-        armright_geo.setTextureOffset(44, 47).addBox(-6F, 9F, -9F, 4F, 15F, 4F, 0F, true);
+        legright = new AdvancedModelBox(this, "legright");
+        legright.setRotationPoint(-3F, 1F, 0F);
+        body.addChild(legright);
 
         body_geo = new AdvancedModelBox(this, "body_geo");
-        body_geo.setRotationPoint(-0F, -10F, -0F);
+        body_geo.setRotationPoint(0F, 0F, 0F);
         body.addChild(body_geo);
-        body_geo.setTextureOffset(0, 21).addBox(-5F, 6F, -11F, 10F, 9F, 10F, 0F, false);
-        body_geo.setTextureOffset(0, 0).addBox(-4.5F, 6F, -1F, 9F, 9F, 12F, 0F, false);
-
-        earleft_geo = new AdvancedModelBox(this, "earleft_geo");
-        earleft_geo.setRotationPoint(-3F, -2F, 14F);
-        earleft.addChild(earleft_geo);
-
-        earright_geo = new AdvancedModelBox(this, "earright_geo");
-        earright_geo.setRotationPoint(3F, -2F, 14F);
-        earright.addChild(earright_geo);
-
-        head_geo = new AdvancedModelBox(this, "head_geo");
-        head_geo.setRotationPoint(-0F, -6F, 12F);
-        head.addChild(head_geo);
-        head_geo.setTextureOffset(33, 33).addBox(-4F, 5F, -18F, 8F, 7F, 7F, 0F, false);
-
-        legleft_geo = new AdvancedModelBox(this, "legleft_geo");
-        legleft_geo.setRotationPoint(-2.9F, -15F, -7.9F);
-        legleft.addChild(legleft_geo);
-        legleft_geo.setTextureOffset(0, 56).addBox(1F, 11F, 6F, 4F, 13F, 4F, 0F, false);
-
-        legright_geo = new AdvancedModelBox(this, "legright_geo");
-        legright_geo.setRotationPoint(2.9F, -15F, -7.9F);
-        legright.addChild(legright_geo);
-        legright_geo.setTextureOffset(0, 56).addBox(-5F, 11F, 6F, 4F, 13F, 4F, 0F, true);
-
-        snout_geo = new AdvancedModelBox(this, "snout_geo");
-        snout_geo.setRotationPoint(-0F, -1.799F, 18.5947F);
-        snout.addChild(snout_geo);
-        setRotationAngle(snout_geo, -0.1745F, -0F, 0F);
-        snout_geo.setTextureOffset(30, 23).addBox(-2.5F, 8F, -21F, 5F, 4F, 3F, 0F, false);
+        body_geo.setTextureOffset(0, 21).addBox(-5F, -4.5F, -19F, 10F, 9F, 10F, 0F, false);
+        body_geo.setTextureOffset(0, 0).addBox(-4.5F, -4.5F, -9F, 9F, 9F, 12F, 0F, false);
 
         tail_geo = new AdvancedModelBox(this, "tail_geo");
-        tail_geo.setRotationPoint(-0F, -6.727F, -8.0441F);
+        tail_geo.setRotationPoint(0F, 0F, 0F);
         tail.addChild(tail_geo);
-        setRotationAngle(tail_geo, -0.0873F, -0F, 0F);
+        tail_geo.setTextureOffset(31, 10).addBox(-1F, 0F, 0F, 2F, 2F, 11F, 0F, false);
 
         tail2_geo = new AdvancedModelBox(this, "tail2_geo");
-        tail2_geo.setRotationPoint(-0F, -16.0215F, -4.687F);
+        tail2_geo.setRotationPoint(0F, 0F, 0F);
         tail2.addChild(tail2_geo);
-        setRotationAngle(tail2_geo, -0.3055F, -0F, 0F);
+        tail2_geo.setTextureOffset(40, 23).addBox(-1F, -2F, 0F, 2F, 2F, 8F, 0.1F, false);
 
-        tail_geo_b_tail1 = new AdvancedModelBox(this, "tail_geo_b_tail1");
-        tail_geo_b_tail1.setRotationPoint(0F, 7F, 11F);
-        tail_geo.addChild(tail_geo_b_tail1);
-        setRotationAngle(tail_geo_b_tail1, 0.9599F, 0F, 0F);
-        tail_geo_b_tail1.setTextureOffset(31, 10).addBox(-1F, 0F, 0F, 2F, 2F, 11F, 0F, false);
+        head_geo = new AdvancedModelBox(this, "head_geo");
+        head_geo.setRotationPoint(0F, 0F, 0F);
+        head.addChild(head_geo);
+        head_geo.setTextureOffset(33, 33).addBox(-4F, -3.5F, -7F, 8F, 7F, 7F, 0F, false);
 
-        tail2_geo_b_tail2 = new AdvancedModelBox(this, "tail2_geo_b_tail2");
-        tail2_geo_b_tail2.setRotationPoint(0F, 9F, 22F);
-        tail2_geo.addChild(tail2_geo_b_tail2);
-        setRotationAngle(tail2_geo_b_tail2, -0.5672F, 0F, 0F);
-        tail2_geo_b_tail2.setTextureOffset(40, 23).addBox(-1F, -2F, 0F, 2F, 2F, 8F, 0.1F, false);
+        snout_geo = new AdvancedModelBox(this, "snout_geo");
+        snout_geo.setRotationPoint(0F, 0F, 0F);
+        snout.addChild(snout_geo);
+        snout_geo.setTextureOffset(30, 23).addBox(-2.5F, -0.5F, -10F, 5F, 4F, 3F, 0F, false);
 
-        earright_geo_b_ear_right = new AdvancedModelBox(this, "earright_geo_b_ear_right");
-        earright_geo_b_ear_right.setRotationPoint(-1.75F, 10.6719F, -13.5361F);
-        earright_geo.addChild(earright_geo_b_ear_right);
-        setRotationAngle(earright_geo_b_ear_right, -0.3491F, -0.4363F, -0.2618F);
-        earright_geo_b_ear_right.setTextureOffset(0, 4).addBox(-1F, -7.25F, 1F, 2F, 2F, 1F, 0F, true);
+        earleft_geo = new AdvancedModelBox(this, "earleft_geo");
+        earleft_geo.setRotationPoint(0F, 0F, 0F);
+        earleft.addChild(earleft_geo);
+        earleft_geo.setTextureOffset(0, 4).addBox(-1F, -7.25F, 1F, 2F, 2F, 1F, 0F, false);
 
-        earleft_geo_b_ear_left = new AdvancedModelBox(this, "earleft_geo_b_ear_left");
-        earleft_geo_b_ear_left.setRotationPoint(1.75F, 10.6719F, -13.5361F);
-        earleft_geo.addChild(earleft_geo_b_ear_left);
-        setRotationAngle(earleft_geo_b_ear_left, -0.3491F, 0.4363F, 0.2618F);
-        earleft_geo_b_ear_left.setTextureOffset(0, 4).addBox(-1F, -7.25F, 1F, 2F, 2F, 1F, 0F, false);
+        earright_geo = new AdvancedModelBox(this, "earright_geo");
+        earright_geo.setRotationPoint(0F, 0F, 0F);
+        earright.addChild(earright_geo);
+        earright_geo.setTextureOffset(0, 4).addBox(-1F, -7.25F, 1F, 2F, 2F, 1F, 0F, true);
+
+        armleft_geo = new AdvancedModelBox(this, "armleft_geo");
+        armleft_geo.setRotationPoint(0F, 0F, 0F);
+        armleft.addChild(armleft_geo);
+        armleft_geo.setTextureOffset(44, 47).addBox(-2F, -0.5F, -2F, 4F, 15F, 4F, 0F, false);
+
+        armright_geo = new AdvancedModelBox(this, "armright_geo");
+        armright_geo.setRotationPoint(0F, 0F, 0F);
+        armright.addChild(armright_geo);
+        armright_geo.setTextureOffset(44, 47).addBox(-2F, -0.5F, -2F, 4F, 15F, 4F, 0F, true);
+
+        legleft_geo = new AdvancedModelBox(this, "legleft_geo");
+        legleft_geo.setRotationPoint(0F, 0F, 0F);
+        legleft.addChild(legleft_geo);
+        legleft_geo.setTextureOffset(0, 56).addBox(-2F, -0.5F, -2F, 4F, 13F, 4F, 0F, false);
+
+        legright_geo = new AdvancedModelBox(this, "legright_geo");
+        legright_geo.setRotationPoint(0F, 0F, 0F);
+        legright.addChild(legright_geo);
+        legright_geo.setTextureOffset(0, 56).addBox(-2F, -0.5F, -2F, 4F, 13F, 4F, 0F, true);
+
         this.updateDefaultPose();
         animator = ModelAnimator.create();
     }
 
-    public void animate(IAnimatedEntity entity, float f, float f1, float f2, float f3, float f4) {
+public void animate(IAnimatedEntity entity, float f, float f1, float f2, float f3, float f4) {
         this.resetToDefaultPose();
         animator.update(entity);
         animator.setAnimation(EntityTiger.ANIMATION_PAW_R);
@@ -295,8 +275,7 @@ public class ModelTiger extends AdvancedEntityModel<EntityTiger> {
 
     }
 
-    @Override
-    public void setupAnim(EntityTiger entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+public void setupAnim(EntityTiger entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         animate(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         float walkSpeed = 0.7F;
         float walkDegree = 0.8F;
@@ -415,12 +394,11 @@ public class ModelTiger extends AdvancedEntityModel<EntityTiger> {
     }
 
     @Override
-        public Iterable<AdvancedModelBox> getAllParts() {
-        return ImmutableList.of(root, body, tail, tail2, head, earleft, earright, snout, legleft, legright, armleft, armright, armleft_geo, armright_geo, body_geo, earleft_geo, earright_geo, head_geo, legleft_geo, legright_geo, snout_geo, tail_geo, tail2_geo, tail_geo_b_tail1, tail2_geo_b_tail2, earright_geo_b_ear_right, earleft_geo_b_ear_left);
+    public Iterable<AdvancedModelBox> getAllParts() {
+        return ImmutableList.of(root, body, tail, tail2, head, snout, earleft, earright, armleft, armright, legleft, legright, body_geo, tail_geo, tail2_geo, head_geo, snout_geo, earleft_geo, earright_geo, armleft_geo, armright_geo, legleft_geo, legright_geo);
     }
 
-    @Override
-    public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         if (this.young) {
             float f = 1.5F;
             head.setScale(f, f, f);
@@ -442,9 +420,9 @@ public class ModelTiger extends AdvancedEntityModel<EntityTiger> {
         }
     }
 
-    public void setRotationAngle(AdvancedModelBox AdvancedModelBox, float x, float y, float z) {
-        AdvancedModelBox.rotateAngleX = x;
-        AdvancedModelBox.rotateAngleY = y;
-        AdvancedModelBox.rotateAngleZ = z;
+    public void setRotationAngle(AdvancedModelBox box, float x, float y, float z) {
+        box.rotateAngleX = x;
+        box.rotateAngleY = y;
+        box.rotateAngleZ = z;
     }
 }

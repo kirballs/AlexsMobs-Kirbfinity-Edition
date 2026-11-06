@@ -1,4 +1,5 @@
 package com.github.alexthe666.alexsmobs.client.model;
+
 import com.github.alexthe666.alexsmobs.entity.EntityGorilla;
 import com.github.alexthe666.alexsmobs.entity.util.Maths;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
@@ -12,202 +13,298 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 
 public class ModelGorilla extends AdvancedEntityModel<EntityGorilla> {
-	public final AdvancedModelBox root;
-	public final AdvancedModelBox body;
-	public final AdvancedModelBox chest;
-	public final AdvancedModelBox head;
-	public final AdvancedModelBox foreheadDK_r1;
-	public final AdvancedModelBox mouth;
-	public final AdvancedModelBox leftArm;
-	public final AdvancedModelBox rightArm;
-	public final AdvancedModelBox leftLeg;
-	public final AdvancedModelBox rightLeg;
-	public final AdvancedModelBox body_geo;
-	public final AdvancedModelBox chest_geo;
-	public final AdvancedModelBox head_geo;
-	public final AdvancedModelBox leftArm_geo;
-	public final AdvancedModelBox leftLeg_geo;
-	public final AdvancedModelBox rightArm_geo;
-	public final AdvancedModelBox rightLeg_geo;
-	public final AdvancedModelBox body_geo_body_c0;
-	public final AdvancedModelBox chest_geo_chest_c0;
-	public final AdvancedModelBox chest_geo_chest_c1;
-	public final AdvancedModelBox body_sb;
-	public final AdvancedModelBox chest_sb;
-	public final AdvancedModelBox head_sb;
-	public final AdvancedModelBox leftArm_sb;
-	public final AdvancedModelBox leftLeg_sb;
-	public final AdvancedModelBox rightArm_sb;
-	public final AdvancedModelBox rightLeg_sb;
-	public final AdvancedModelBox body_sb_body_c0;
-	public final AdvancedModelBox body_sb_body1_c0;
-	public final AdvancedModelBox chest_sb_chest_c0;
-	public final AdvancedModelBox chest_sb_chest_c1;
-	public final ModelAnimator animator;
-	
-	public ModelGorilla() {
-		texWidth = 128;
-		texHeight = 128;
+    public final AdvancedModelBox root;
+    private final AdvancedModelBox normalRoot;
+    private final AdvancedModelBox silverbackRoot;
+    private final AdvancedModelBox n_body;
+    private final AdvancedModelBox n_chest;
+    private final AdvancedModelBox n_head;
+    private final AdvancedModelBox n_mouth;
+    private final AdvancedModelBox n_foreheadDK_r1;
+    private final AdvancedModelBox n_leftArm;
+    private final AdvancedModelBox n_rightArm;
+    private final AdvancedModelBox n_leftLeg;
+    private final AdvancedModelBox n_rightLeg;
+    private final AdvancedModelBox n_body_geo;
+    private final AdvancedModelBox n_body_geo_c0;
+    private final AdvancedModelBox n_chest_geo;
+    private final AdvancedModelBox n_chest_geo_c0;
+    private final AdvancedModelBox n_chest_geo_c1;
+    private final AdvancedModelBox n_head_geo;
+    private final AdvancedModelBox n_mouth_geo;
+    private final AdvancedModelBox n_leftArm_geo;
+    private final AdvancedModelBox n_rightArm_geo;
+    private final AdvancedModelBox n_leftLeg_geo;
+    private final AdvancedModelBox n_rightLeg_geo;
+    private final AdvancedModelBox s_body;
+    private final AdvancedModelBox s_chest;
+    private final AdvancedModelBox s_head;
+    private final AdvancedModelBox s_mouth;
+    private final AdvancedModelBox s_foreheadDK_r1;
+    private final AdvancedModelBox s_leftArm;
+    private final AdvancedModelBox s_rightArm;
+    private final AdvancedModelBox s_leftLeg;
+    private final AdvancedModelBox s_rightLeg;
+    private final AdvancedModelBox s_body_sb;
+    private final AdvancedModelBox s_body_sb_c0;
+    private final AdvancedModelBox s_body_sb_c1;
+    private final AdvancedModelBox s_chest_sb;
+    private final AdvancedModelBox s_chest_sb_c0;
+    private final AdvancedModelBox s_chest_sb_c1;
+    private final AdvancedModelBox s_head_sb;
+    private final AdvancedModelBox s_mouth_sb;
+    private final AdvancedModelBox s_leftArm_sb;
+    private final AdvancedModelBox s_rightArm_sb;
+    private final AdvancedModelBox s_leftLeg_sb;
+    private final AdvancedModelBox s_rightLeg_sb;
+    public AdvancedModelBox body;
+    public AdvancedModelBox chest;
+    public AdvancedModelBox head;
+    public AdvancedModelBox foreheadDK_r1;
+    public AdvancedModelBox mouth;
+    public AdvancedModelBox leftArm;
+    public AdvancedModelBox rightArm;
+    public AdvancedModelBox leftLeg;
+    public AdvancedModelBox rightLeg;
+    private final ModelAnimator animator;
+    private Boolean variantSilverback = null;
 
-		root = new AdvancedModelBox(this, "root");
-		root.setRotationPoint(0F, 24F, 0F);
+    public ModelGorilla() {
+        // Generated from customs/gorilla.geo.json (normal) and customs/silverback.geo.json
+        // (silverback), both 128x128. Bedrock -> Java: X/Z identical, Y flipped
+        // about the ground plane (24 - y). Every animated bone sits at the real
+        // geometry pivot of its own variant, so animations rotate correctly.
+        // The silverback "saddle" tack bone from the source geometry is not imported.
+        texWidth = 128;
+        texHeight = 128;
 
-		body = new AdvancedModelBox(this, "body");
-		body.setRotationPoint(0F, -14F, 3F);
-		root.addChild(body);
+        root = new AdvancedModelBox(this, "root");
+        root.setRotationPoint(0F, 24F, 0F);
 
-		chest = new AdvancedModelBox(this, "chest");
-		chest.setRotationPoint(0F, 4F, -3F);
-		body.addChild(chest);
+        normalRoot = new AdvancedModelBox(this, "normalRoot");
+        normalRoot.setRotationPoint(0F, 0F, 0F);
+        root.addChild(normalRoot);
 
-		head = new AdvancedModelBox(this, "head");
-		head.setRotationPoint(0F, -8F, -11F);
-		chest.addChild(head);
+        silverbackRoot = new AdvancedModelBox(this, "silverbackRoot");
+        silverbackRoot.setRotationPoint(0F, 0F, 0F);
+        root.addChild(silverbackRoot);
 
-		foreheadDK_r1 = new AdvancedModelBox(this, "foreheadDK_r1");
-		foreheadDK_r1.setRotationPoint(0F, -6F, -2F);
-		head.addChild(foreheadDK_r1);
-		setRotationAngle(foreheadDK_r1, 0F, 0.2182F, 0F);
+        n_body = new AdvancedModelBox(this, "n_body");
+        n_body.setRotationPoint(0F, -11.5F, 9F);
+        normalRoot.addChild(n_body);
 
-		mouth = new AdvancedModelBox(this, "mouth");
-		mouth.setRotationPoint(0F, 0F, -1F);
-		head.addChild(mouth);
+        n_chest = new AdvancedModelBox(this, "n_chest");
+        n_chest.setRotationPoint(0F, -3.5F, -7.5F);
+        n_body.addChild(n_chest);
 
-		leftArm = new AdvancedModelBox(this, "leftArm");
-		leftArm.setRotationPoint(6F, -6.5F, -9.5F);
-		chest.addChild(leftArm);
+        n_head = new AdvancedModelBox(this, "n_head");
+        n_head.setRotationPoint(0F, -4.75F, -10F);
+        n_chest.addChild(n_head);
 
-		rightArm = new AdvancedModelBox(this, "rightArm");
-		rightArm.setRotationPoint(-6F, -6.5F, -9.5F);
-		chest.addChild(rightArm);
+        n_mouth = new AdvancedModelBox(this, "n_mouth");
+        n_mouth.setRotationPoint(0F, 0F, 0F);
+        n_head.addChild(n_mouth);
 
-		leftLeg = new AdvancedModelBox(this, "leftLeg");
-		leftLeg.setRotationPoint(3F, 4.5F, 2.5F);
-		body.addChild(leftLeg);
+        n_foreheadDK_r1 = new AdvancedModelBox(this, "n_foreheadDK_r1");
+        n_foreheadDK_r1.setRotationPoint(0F, 0F, 0F);
+        n_head.addChild(n_foreheadDK_r1);
 
-		rightLeg = new AdvancedModelBox(this, "rightLeg");
-		rightLeg.setRotationPoint(-3F, 4.5F, 2.5F);
-		body.addChild(rightLeg);
+        n_leftArm = new AdvancedModelBox(this, "n_leftArm");
+        n_leftArm.setRotationPoint(6F, -1.5F, -9.25F);
+        n_chest.addChild(n_leftArm);
 
-		body_geo = new AdvancedModelBox(this, "body_geo");
-		body_geo.setRotationPoint(-0F, -10F, -3F);
-		body.addChild(body_geo);
+        n_rightArm = new AdvancedModelBox(this, "n_rightArm");
+        n_rightArm.setRotationPoint(-6F, -1.5F, -9.25F);
+        n_chest.addChild(n_rightArm);
 
-		chest_geo = new AdvancedModelBox(this, "chest_geo");
-		chest_geo.setRotationPoint(-0F, -14F, -0F);
-		chest.addChild(chest_geo);
-		chest_geo.setTextureOffset(50, 47).addBox(-9.5F, 8.5F, -3.5F, 3F, 8F, 8F, 0F, true);
-		chest_geo.setTextureOffset(50, 47).addBox(6.5F, 8.5F, -3.5F, 3F, 8F, 8F, 0F, false);
+        n_leftLeg = new AdvancedModelBox(this, "n_leftLeg");
+        n_leftLeg.setRotationPoint(6F, 0F, 0F);
+        n_body.addChild(n_leftLeg);
 
-		head_geo = new AdvancedModelBox(this, "head_geo");
-		head_geo.setRotationPoint(-0F, -6F, 11F);
-		head.addChild(head_geo);
-		head_geo.setTextureOffset(0, 30).addBox(-4.5F, -3F, -14F, 9F, 10F, 8F, 0F, false);
-		head_geo.setTextureOffset(0, 0).addBox(-2.5F, 3F, -16F, 5F, 4F, 2F, 0F, false);
+        n_rightLeg = new AdvancedModelBox(this, "n_rightLeg");
+        n_rightLeg.setRotationPoint(-6F, 0F, 0F);
+        n_body.addChild(n_rightLeg);
 
-		leftArm_geo = new AdvancedModelBox(this, "leftArm_geo");
-		leftArm_geo.setRotationPoint(-6F, -7.5F, 9.5F);
-		leftArm.addChild(leftArm_geo);
-		leftArm_geo.setTextureOffset(34, 30).addBox(3F, 5F, -12F, 6F, 19F, 6.5F, 0F, true);
+        n_body_geo = new AdvancedModelBox(this, "n_body_geo");
+        n_body_geo.setRotationPoint(0F, 0F, 0F);
+        n_body.addChild(n_body_geo);
+        n_body_geo_c0 = new AdvancedModelBox(this, "n_body_geo_c0");
+        n_body_geo_c0.setRotationPoint(0F, 1F, -8F);
+        n_body_geo.addChild(n_body_geo_c0);
+        setRotationAngle(n_body_geo_c0, 0.2618F, 0F, 0F);
+        n_body_geo_c0.setTextureOffset(1, 0).addBox(-7F, -8.5F, -12F, 14F, 10F, 20F, 0F, false);
 
-		leftLeg_geo = new AdvancedModelBox(this, "leftLeg_geo");
-		leftLeg_geo.setRotationPoint(-3F, -14.5F, -5.5F);
-		leftLeg.addChild(leftLeg_geo);
-		leftLeg_geo.setTextureOffset(0, 48).addBox(3F, 10F, 4F, 6F, 14F, 6F, 0F, false);
+        n_chest_geo = new AdvancedModelBox(this, "n_chest_geo");
+        n_chest_geo.setRotationPoint(0F, 0F, 0F);
+        n_chest.addChild(n_chest_geo);
+        n_chest_geo_c0 = new AdvancedModelBox(this, "n_chest_geo_c0");
+        n_chest_geo_c0.setRotationPoint(0F, 6F, -1.5F);
+        n_chest_geo.addChild(n_chest_geo_c0);
+        setRotationAngle(n_chest_geo_c0, 0.4363F, 0F, 0F);
+        n_chest_geo_c0.setTextureOffset(49, 0).addBox(-7F, -9.3F, -3.25F, 14F, 10F, 2F, 0.1F, false);
+        n_chest_geo_c1 = new AdvancedModelBox(this, "n_chest_geo_c1");
+        n_chest_geo_c1.setRotationPoint(0F, 6F, -1.5F);
+        n_chest_geo.addChild(n_chest_geo_c1);
+        setRotationAngle(n_chest_geo_c1, 0.0436F, 0F, 0F);
+        n_chest_geo_c1.setTextureOffset(58, 30).addBox(-6F, -7.5F, 0.5F, 12F, 8F, 2F, 0.1F, false);
+        n_chest_geo.setTextureOffset(50, 47).addBox(-9.5F, -0.5F, -5F, 3F, 8F, 8F, 0F, true);
+        n_chest_geo.setTextureOffset(50, 47).addBox(6.5F, -0.5F, -5F, 3F, 8F, 8F, 0F, false);
 
-		rightArm_geo = new AdvancedModelBox(this, "rightArm_geo");
-		rightArm_geo.setRotationPoint(6F, -7.5F, 9.5F);
-		rightArm.addChild(rightArm_geo);
-		rightArm_geo.setTextureOffset(34, 30).addBox(-9F, 5F, -12F, 6F, 19F, 6.5F, 0F, false);
+        n_head_geo = new AdvancedModelBox(this, "n_head_geo");
+        n_head_geo.setRotationPoint(0F, 0F, 0F);
+        n_head.addChild(n_head_geo);
+        n_head_geo.setTextureOffset(0, 30).addBox(-4.5F, -7.25F, -5.5F, 9F, 10F, 8F, 0F, false);
 
-		rightLeg_geo = new AdvancedModelBox(this, "rightLeg_geo");
-		rightLeg_geo.setRotationPoint(3F, -14.5F, -5.5F);
-		rightLeg.addChild(rightLeg_geo);
-		rightLeg_geo.setTextureOffset(0, 48).addBox(-9F, 10F, 4F, 6F, 14F, 6F, 0F, true);
+        n_mouth_geo = new AdvancedModelBox(this, "n_mouth_geo");
+        n_mouth_geo.setRotationPoint(0F, 0F, 0F);
+        n_mouth.addChild(n_mouth_geo);
+        n_mouth_geo.setTextureOffset(0, 0).addBox(-2.5F, -1.25F, -7.5F, 5F, 4F, 2F, 0F, false);
 
-		body_geo_body_c0 = new AdvancedModelBox(this, "body_geo_body_c0");
-		body_geo_body_c0.setRotationPoint(0F, 13.5F, 1F);
-		body_geo.addChild(body_geo_body_c0);
-		setRotationAngle(body_geo_body_c0, 0.2618F, 0F, 0F);
-		body_geo_body_c0.setTextureOffset(1, 0).addBox(-7F, -8.5F, -12F, 14F, 10F, 20F, 0F, false);
+        n_leftArm_geo = new AdvancedModelBox(this, "n_leftArm_geo");
+        n_leftArm_geo.setRotationPoint(0F, 0F, 0F);
+        n_leftArm.addChild(n_leftArm_geo);
+        n_leftArm_geo.setTextureOffset(34, 30).addBox(-3F, -2.5F, -4.25F, 6F, 19F, 6.5F, 0F, true);
 
-		chest_geo_chest_c0 = new AdvancedModelBox(this, "chest_geo_chest_c0");
-		chest_geo_chest_c0.setRotationPoint(0F, 15F, 0F);
-		chest_geo.addChild(chest_geo_chest_c0);
-		setRotationAngle(chest_geo_chest_c0, 0.4363F, 0F, 0F);
-		chest_geo_chest_c0.setTextureOffset(49, 0).addBox(-7F, -9.3F, -3.25F, 14F, 10F, 2F, 0.1F, false);
+        n_rightArm_geo = new AdvancedModelBox(this, "n_rightArm_geo");
+        n_rightArm_geo.setRotationPoint(0F, 0F, 0F);
+        n_rightArm.addChild(n_rightArm_geo);
+        n_rightArm_geo.setTextureOffset(34, 30).addBox(-3F, -2.5F, -4.25F, 6F, 19F, 6.5F, 0F, false);
 
-		chest_geo_chest_c1 = new AdvancedModelBox(this, "chest_geo_chest_c1");
-		chest_geo_chest_c1.setRotationPoint(0F, 15F, 0F);
-		chest_geo.addChild(chest_geo_chest_c1);
-		setRotationAngle(chest_geo_chest_c1, 0.0436F, 0F, 0F);
-		chest_geo_chest_c1.setTextureOffset(58, 30).addBox(-6F, -7.5F, 0.5F, 12F, 8F, 2F, 0.1F, false);
+        n_leftLeg_geo = new AdvancedModelBox(this, "n_leftLeg_geo");
+        n_leftLeg_geo.setRotationPoint(0F, 0F, 0F);
+        n_leftLeg.addChild(n_leftLeg_geo);
+        n_leftLeg_geo.setTextureOffset(0, 48).addBox(-3F, -2.5F, -5F, 6F, 14F, 6F, 0F, false);
 
-		body_sb = new AdvancedModelBox(this, "body_sb");
-		body_sb.setRotationPoint(-0F, -10F, -3F);
-		body.addChild(body_sb);
+        n_rightLeg_geo = new AdvancedModelBox(this, "n_rightLeg_geo");
+        n_rightLeg_geo.setRotationPoint(0F, 0F, 0F);
+        n_rightLeg.addChild(n_rightLeg_geo);
+        n_rightLeg_geo.setTextureOffset(0, 48).addBox(-3F, -2.5F, -5F, 6F, 14F, 6F, 0F, true);
 
-		chest_sb = new AdvancedModelBox(this, "chest_sb");
-		chest_sb.setRotationPoint(-0F, -14F, -0F);
-		chest.addChild(chest_sb);
-		chest_sb.setTextureOffset(70, 28).addBox(-9.5F, 8.5F, -3.5F, 3F, 8F, 8F, 0F, true);
-		chest_sb.setTextureOffset(70, 28).addBox(6.5F, 8.5F, -3.5F, 3F, 8F, 8F, 0F, false);
+        // --- silverback geometry ---
 
-		head_sb = new AdvancedModelBox(this, "head_sb");
-		head_sb.setRotationPoint(-0F, -6F, 11F);
-		head.addChild(head_sb);
-		head_sb.setTextureOffset(44, 37).addBox(-4.5F, -4F, -15F, 9F, 11F, 8F, 0F, false);
-		head_sb.setTextureOffset(0, 23).addBox(-2.5F, 3F, -17F, 5F, 4F, 2F, 0F, false);
+        s_body = new AdvancedModelBox(this, "s_body");
+        s_body.setRotationPoint(0F, -11.5F, 8F);
+        silverbackRoot.addChild(s_body);
 
-		leftArm_sb = new AdvancedModelBox(this, "leftArm_sb");
-		leftArm_sb.setRotationPoint(-6F, -7.5F, 9.5F);
-		leftArm.addChild(leftArm_sb);
-		leftArm_sb.setTextureOffset(0, 45).addBox(4F, 5F, -12F, 6F, 19F, 7F, 0F, true);
+        s_chest = new AdvancedModelBox(this, "s_chest");
+        s_chest.setRotationPoint(0F, -3.5F, -7.5F);
+        s_body.addChild(s_chest);
 
-		leftLeg_sb = new AdvancedModelBox(this, "leftLeg_sb");
-		leftLeg_sb.setRotationPoint(-3F, -14.5F, -5.5F);
-		leftLeg.addChild(leftLeg_sb);
-		leftLeg_sb.setTextureOffset(56, 68).addBox(3F, 11F, 5F, 6F, 13F, 6F, 0F, false);
+        s_head = new AdvancedModelBox(this, "s_head");
+        s_head.setRotationPoint(0F, -4.75F, -10F);
+        s_chest.addChild(s_head);
 
-		rightArm_sb = new AdvancedModelBox(this, "rightArm_sb");
-		rightArm_sb.setRotationPoint(6F, -7.5F, 9.5F);
-		rightArm.addChild(rightArm_sb);
-		rightArm_sb.setTextureOffset(0, 45).addBox(-10F, 5F, -12F, 6F, 19F, 7F, 0F, false);
+        s_mouth = new AdvancedModelBox(this, "s_mouth");
+        s_mouth.setRotationPoint(0F, 0F, 0F);
+        s_head.addChild(s_mouth);
 
-		rightLeg_sb = new AdvancedModelBox(this, "rightLeg_sb");
-		rightLeg_sb.setRotationPoint(3F, -14.5F, -5.5F);
-		rightLeg.addChild(rightLeg_sb);
-		rightLeg_sb.setTextureOffset(56, 68).addBox(-9F, 11F, 5F, 6F, 13F, 6F, 0F, true);
+        s_foreheadDK_r1 = new AdvancedModelBox(this, "s_foreheadDK_r1");
+        s_foreheadDK_r1.setRotationPoint(0F, 0F, 0F);
+        s_head.addChild(s_foreheadDK_r1);
 
-		body_sb_body_c0 = new AdvancedModelBox(this, "body_sb_body_c0");
-		body_sb_body_c0.setRotationPoint(0F, 15F, -1F);
-		body_sb.addChild(body_sb_body_c0);
-		setRotationAngle(body_sb_body_c0, 0.0436F, 0F, 0F);
-		body_sb_body_c0.setTextureOffset(0, 23).addBox(-6F, -7.5F, -1F, 12F, 8F, 14F, 0F, false);
+        s_leftArm = new AdvancedModelBox(this, "s_leftArm");
+        s_leftArm.setRotationPoint(9F, -1.5F, -8F);
+        s_chest.addChild(s_leftArm);
 
-		body_sb_body1_c0 = new AdvancedModelBox(this, "body_sb_body1_c0");
-		body_sb_body1_c0.setRotationPoint(0F, 15F, -1F);
-		body_sb.addChild(body_sb_body1_c0);
-		setRotationAngle(body_sb_body1_c0, 0.6109F, 0F, 0F);
-		body_sb_body1_c0.setTextureOffset(0, 0).addBox(-7F, -8.5F, -13F, 14F, 10F, 13F, 0F, false);
+        s_rightArm = new AdvancedModelBox(this, "s_rightArm");
+        s_rightArm.setRotationPoint(-9F, -1.5F, -8F);
+        s_chest.addChild(s_rightArm);
 
-		chest_sb_chest_c0 = new AdvancedModelBox(this, "chest_sb_chest_c0");
-		chest_sb_chest_c0.setRotationPoint(0F, 15F, -1F);
-		chest_sb.addChild(chest_sb_chest_c0);
-		setRotationAngle(chest_sb_chest_c0, 0.6109F, 0F, 0F);
-		chest_sb_chest_c0.setTextureOffset(62, 56).addBox(-7F, -8.5F, -3.25F, 14F, 10F, 2F, 0.1F, false);
+        s_leftLeg = new AdvancedModelBox(this, "s_leftLeg");
+        s_leftLeg.setRotationPoint(6F, 0F, 0F);
+        s_body.addChild(s_leftLeg);
 
-		chest_sb_chest_c1 = new AdvancedModelBox(this, "chest_sb_chest_c1");
-		chest_sb_chest_c1.setRotationPoint(0F, 15F, -1F);
-		chest_sb.addChild(chest_sb_chest_c1);
-		setRotationAngle(chest_sb_chest_c1, 0.0436F, 0F, 0F);
-		chest_sb_chest_c1.setTextureOffset(24, 70).addBox(-6F, -7.5F, 0.5F, 12F, 8F, 2F, 0.1F, false);
-		this.collectVariantParts();
-		this.updateDefaultPose();
-		animator = ModelAnimator.create();
-	}
+        s_rightLeg = new AdvancedModelBox(this, "s_rightLeg");
+        s_rightLeg.setRotationPoint(-6F, 0F, 0F);
+        s_body.addChild(s_rightLeg);
 
-	public void animate(IAnimatedEntity entity, float f, float f1, float f2, float f3, float f4) {
+        s_body_sb = new AdvancedModelBox(this, "s_body_sb");
+        s_body_sb.setRotationPoint(0F, 0F, 0F);
+        s_body.addChild(s_body_sb);
+        s_body_sb_c0 = new AdvancedModelBox(this, "s_body_sb_c0");
+        s_body_sb_c0.setRotationPoint(0F, 2.5F, -9F);
+        s_body_sb.addChild(s_body_sb_c0);
+        setRotationAngle(s_body_sb_c0, 0.0436F, 0F, 0F);
+        s_body_sb_c0.setTextureOffset(0, 23).addBox(-6F, -7.5F, -1F, 12F, 8F, 14F, 0F, false);
+        s_body_sb_c1 = new AdvancedModelBox(this, "s_body_sb_c1");
+        s_body_sb_c1.setRotationPoint(0F, 2.5F, -9F);
+        s_body_sb.addChild(s_body_sb_c1);
+        setRotationAngle(s_body_sb_c1, 0.6109F, 0F, 0F);
+        s_body_sb_c1.setTextureOffset(0, 0).addBox(-7F, -8.5F, -13F, 14F, 10F, 13F, 0F, false);
+
+        s_chest_sb = new AdvancedModelBox(this, "s_chest_sb");
+        s_chest_sb.setRotationPoint(0F, 0F, 0F);
+        s_chest.addChild(s_chest_sb);
+        s_chest_sb_c0 = new AdvancedModelBox(this, "s_chest_sb_c0");
+        s_chest_sb_c0.setRotationPoint(0F, 6F, -1.5F);
+        s_chest_sb.addChild(s_chest_sb_c0);
+        setRotationAngle(s_chest_sb_c0, 0.6109F, 0F, 0F);
+        s_chest_sb_c0.setTextureOffset(62, 56).addBox(-7F, -8.5F, -3.25F, 14F, 10F, 2F, 0.1F, false);
+        s_chest_sb_c1 = new AdvancedModelBox(this, "s_chest_sb_c1");
+        s_chest_sb_c1.setRotationPoint(0F, 6F, -1.5F);
+        s_chest_sb.addChild(s_chest_sb_c1);
+        setRotationAngle(s_chest_sb_c1, 0.0436F, 0F, 0F);
+        s_chest_sb_c1.setTextureOffset(24, 70).addBox(-6F, -7.5F, 0.5F, 12F, 8F, 2F, 0.1F, false);
+        s_chest_sb.setTextureOffset(70, 28).addBox(-9.5F, -0.5F, -4F, 3F, 8F, 8F, 0F, true);
+        s_chest_sb.setTextureOffset(70, 28).addBox(6.5F, -0.5F, -4F, 3F, 8F, 8F, 0F, false);
+
+        s_head_sb = new AdvancedModelBox(this, "s_head_sb");
+        s_head_sb.setRotationPoint(0F, 0F, 0F);
+        s_head.addChild(s_head_sb);
+        s_head_sb.setTextureOffset(44, 37).addBox(-4.5F, -8.25F, -5.5F, 9F, 11F, 8F, 0F, false);
+
+        s_mouth_sb = new AdvancedModelBox(this, "s_mouth_sb");
+        s_mouth_sb.setRotationPoint(0F, 0F, 0F);
+        s_mouth.addChild(s_mouth_sb);
+        s_mouth_sb.setTextureOffset(0, 23).addBox(-2.5F, -1.25F, -7.5F, 5F, 4F, 2F, 0F, false);
+
+        s_leftArm_sb = new AdvancedModelBox(this, "s_leftArm_sb");
+        s_leftArm_sb.setRotationPoint(0F, 0F, 0F);
+        s_leftArm.addChild(s_leftArm_sb);
+        s_leftArm_sb.setTextureOffset(0, 45).addBox(-5F, -2.5F, -4.5F, 6F, 19F, 7F, 0F, true);
+
+        s_rightArm_sb = new AdvancedModelBox(this, "s_rightArm_sb");
+        s_rightArm_sb.setRotationPoint(0F, 0F, 0F);
+        s_rightArm.addChild(s_rightArm_sb);
+        s_rightArm_sb.setTextureOffset(0, 45).addBox(-1F, -2.5F, -4.5F, 6F, 19F, 7F, 0F, false);
+
+        s_leftLeg_sb = new AdvancedModelBox(this, "s_leftLeg_sb");
+        s_leftLeg_sb.setRotationPoint(0F, 0F, 0F);
+        s_leftLeg.addChild(s_leftLeg_sb);
+        s_leftLeg_sb.setTextureOffset(56, 68).addBox(-3F, -1.5F, -3F, 6F, 13F, 6F, 0F, false);
+
+        s_rightLeg_sb = new AdvancedModelBox(this, "s_rightLeg_sb");
+        s_rightLeg_sb.setRotationPoint(0F, 0F, 0F);
+        s_rightLeg.addChild(s_rightLeg_sb);
+        s_rightLeg_sb.setTextureOffset(56, 68).addBox(-3F, -1.5F, -3F, 6F, 13F, 6F, 0F, true);
+
+        this.updateDefaultPose();
+        animator = ModelAnimator.create();
+        // Force a defined initial state: hide the silverback and point the animated
+        // fields at the normal hierarchy before the first render.
+        this.setVariant(false);
+    }
+
+    /** Swaps both the visible geometry and the animated bone references. */
+    public void setVariant(boolean silverback) {
+        if (this.variantSilverback != null && this.variantSilverback == silverback) {
+            return;
+        }
+        this.variantSilverback = silverback;
+        normalRoot.showModel = !silverback;
+        silverbackRoot.showModel = silverback;
+        body = silverback ? s_body : n_body;
+        chest = silverback ? s_chest : n_chest;
+        head = silverback ? s_head : n_head;
+        foreheadDK_r1 = silverback ? s_foreheadDK_r1 : n_foreheadDK_r1;
+        mouth = silverback ? s_mouth : n_mouth;
+        leftArm = silverback ? s_leftArm : n_leftArm;
+        rightArm = silverback ? s_rightArm : n_rightArm;
+        leftLeg = silverback ? s_leftLeg : n_leftLeg;
+        rightLeg = silverback ? s_rightLeg : n_rightLeg;
+    }
+
+public void animate(IAnimatedEntity entity, float f, float f1, float f2, float f3, float f4) {
 		this.resetToDefaultPose();
 		animator.update(entity);
 		animator.setAnimation(EntityGorilla.ANIMATION_BREAKBLOCK_R);
@@ -293,28 +390,7 @@ public class ModelGorilla extends AdvancedEntityModel<EntityGorilla> {
 		animator.resetKeyframe(6);
 	}
 
-	public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-		if (this.young) {
-			float f = 1.35F;
-			head.setScale(f, f, f);
-			head.setShouldScaleChildren(true);
-			matrixStackIn.pushPose();
-			parts().forEach((p_228292_8_) -> {
-				p_228292_8_.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-			});
-			matrixStackIn.popPose();
-			head.setScale(1, 1, 1);
-		} else {
-			matrixStackIn.pushPose();
-			parts().forEach((p_228290_8_) -> {
-				p_228290_8_.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-			});
-			matrixStackIn.popPose();
-		}
-	}
-
-	@Override
-	public void setupAnim(EntityGorilla entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+public void setupAnim(EntityGorilla entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.setVariant(entityIn.isSilverback());
 		this.resetToDefaultPose();
 		animate(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
@@ -372,40 +448,39 @@ public class ModelGorilla extends AdvancedEntityModel<EntityGorilla> {
 		}
 	}
 
+    @Override
+    public Iterable<BasicModelPart> parts() {
+        return ImmutableList.of(root);
+    }
 
+    @Override
+    public Iterable<AdvancedModelBox> getAllParts() {
+        return ImmutableList.of(root, normalRoot, silverbackRoot, n_body, n_chest, n_head, n_mouth, n_foreheadDK_r1, n_leftArm, n_rightArm, n_leftLeg, n_rightLeg, n_body_geo, n_body_geo_c0, n_chest_geo, n_chest_geo_c0, n_chest_geo_c1, n_head_geo, n_mouth_geo, n_leftArm_geo, n_rightArm_geo, n_leftLeg_geo, n_rightLeg_geo, s_body, s_chest, s_head, s_mouth, s_foreheadDK_r1, s_leftArm, s_rightArm, s_leftLeg, s_rightLeg, s_body_sb, s_body_sb_c0, s_body_sb_c1, s_chest_sb, s_chest_sb_c0, s_chest_sb_c1, s_head_sb, s_mouth_sb, s_leftArm_sb, s_rightArm_sb, s_leftLeg_sb, s_rightLeg_sb);
+    }
 
-	private final java.util.List<AdvancedModelBox> normalParts = new java.util.ArrayList<>();
-	private final java.util.List<AdvancedModelBox> silverbackParts = new java.util.ArrayList<>();
-	private boolean variantSilverback = false;
-
-	private void collectVariantParts() {
-		for (AdvancedModelBox b : getAllParts()) {
-			if (b.boxName != null && b.boxName.endsWith("_geo")) normalParts.add(b);
-			if (b.boxName != null && b.boxName.endsWith("_sb")) silverbackParts.add(b);
+public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+		if (this.young) {
+			float f = 1.35F;
+			head.setScale(f, f, f);
+			head.setShouldScaleChildren(true);
+			matrixStackIn.pushPose();
+			parts().forEach((p_228292_8_) -> {
+				p_228292_8_.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+			});
+			matrixStackIn.popPose();
+			head.setScale(1, 1, 1);
+		} else {
+			matrixStackIn.pushPose();
+			parts().forEach((p_228290_8_) -> {
+				p_228290_8_.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+			});
+			matrixStackIn.popPose();
 		}
 	}
 
-	public void setVariant(boolean silverback) {
-		if (this.variantSilverback == silverback) return;
-		this.variantSilverback = silverback;
-		normalParts.forEach(p -> p.showModel = !silverback);
-		silverbackParts.forEach(p -> p.showModel = silverback);
-	}
-
-	public void setRotationAngle(AdvancedModelBox AdvancedModelBox, float x, float y, float z) {
-		AdvancedModelBox.rotateAngleX = x;
-		AdvancedModelBox.rotateAngleY = y;
-		AdvancedModelBox.rotateAngleZ = z;
-	}
-
-	@Override
-	public Iterable<BasicModelPart> parts() {
-		return ImmutableList.of(root);
-	}
-
-	@Override
-	public Iterable<AdvancedModelBox> getAllParts() {
-		return ImmutableList.of(root, body, chest, head, foreheadDK_r1, mouth, leftArm, rightArm, leftLeg, rightLeg, body_geo, chest_geo, head_geo, leftArm_geo, leftLeg_geo, rightArm_geo, rightLeg_geo, body_geo_body_c0, chest_geo_chest_c0, chest_geo_chest_c1, body_sb, chest_sb, head_sb, leftArm_sb, leftLeg_sb, rightArm_sb, rightLeg_sb, body_sb_body_c0, body_sb_body1_c0, chest_sb_chest_c0, chest_sb_chest_c1);
-	}
-
+    public void setRotationAngle(AdvancedModelBox box, float x, float y, float z) {
+        box.rotateAngleX = x;
+        box.rotateAngleY = y;
+        box.rotateAngleZ = z;
+    }
 }
